@@ -10,15 +10,26 @@ class Post extends Model
 {
     use SoftDeletes;
 
-    protected $guarded = [];
+    protected $fillable = ['title',
+        'slug',
+        'category_id',
+        'color',
+        'content',
+        'image', 'published',
+        'deleted_at',
+    ];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
+    public function tag()
+    {
+        return $this->belongsToMany(Tag::class, 'post_tags');
+    }
+
     protected $casts = [
-        'tags' => 'array',
         'published' => 'boolean',
         'published_at' => 'date',
     ];

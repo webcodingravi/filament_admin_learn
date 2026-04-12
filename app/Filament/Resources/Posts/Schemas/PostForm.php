@@ -60,9 +60,14 @@ class PostForm
                     ]),
 
                     Section::make('Meta')->schema([
-                        TagsInput::make('tags')->rule('required'),
+                        // TagsInput::make('tags')->rule('required'),
+                        Select::make('tags')
+                            ->relationship('tag', 'name')
+                            ->multiple()
+                            ->preload(),
                         Checkbox::make('published'),
-                        DatePicker::make('published_at')->minDate(now())->label('Published Date'),
+                        DatePicker::make('published_at')->minDate(fn ($record) => $record ? null : now())
+                            ->label('Published Date'),
                     ]),
 
                 ])->columnSpan(1),

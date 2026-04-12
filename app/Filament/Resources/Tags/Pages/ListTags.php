@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\Users\Pages;
+namespace App\Filament\Resources\Tags\Pages;
 
-use App\Filament\Resources\Users\UserResource;
+use App\Filament\Resources\Tags\TagResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Icons\Heroicon;
 
-class ListUsers extends ListRecords
+class ListTags extends ListRecords
 {
-    protected static string $resource = UserResource::class;
+    protected static string $resource = TagResource::class;
 
     protected function getHeaderActions(): array
     {

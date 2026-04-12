@@ -11,8 +11,10 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -22,14 +24,27 @@ class ProductsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')->label('S.NO.')->rowIndex(),
-                ImageColumn::make('image')->disk('public'),
-                TextColumn::make('name')->searchable()->sortable(),
-                TextColumn::make('sku')->searchable()->sortable(),
-                TextColumn::make('created_at')->sortable(),
+                TextColumn::make('id')->label('S.NO.')
+                    ->rowIndex()
+                    ->toggleable(),
+                ImageColumn::make('image')->disk('public')->toggleable(),
+                TextColumn::make('name')->searchable()->sortable()->toggleable(),
+                TextColumn::make('sku')->searchable()->sortable()->toggleable(),
+                TextColumn::make('created_at')->label('Created Date')->dateTime()->sortable()->toggleable(),
             ])->defaultSort('id', 'desc')
             ->filters([
                 TrashedFilter::make('Trashed'),
+                Filter::make('created_at')
+                    ->label('creation_date')
+                    ->schema([
+                        DatePicker::make('created_at')
+                            ->label('Select Date:'),
+                    ])->query(function ($query, $data) {
+                        return $query
+                            ->when($data['created_at'], function ($q, $date) {
+                                $q->whereDate('created_at', $date);
+                            });
+                    }),
             ])
             ->recordActions([
                 ViewAction::make(),

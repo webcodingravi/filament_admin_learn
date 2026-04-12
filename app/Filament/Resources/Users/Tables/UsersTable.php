@@ -10,7 +10,9 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -20,12 +22,35 @@ class UsersTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')->label('S.NO.')->rowIndex(),
-                TextColumn::make('name')->searchable()->sortable(),
-                TextColumn::make('email')->searchable()->sortable(),
+                TextColumn::make('id')->label('S.NO.')
+                    ->rowIndex()
+                    ->toggleable(),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('email')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('created_at')
+                    ->label('Creation Date')
+                    ->toggleable()
+                    ->dateTime()
+                    ->sortable(),
             ])->defaultSort('id', 'desc')
             ->filters([
                 TrashedFilter::make(),
+                Filter::make('created_at')
+                    ->label('Creation Date')
+                    ->schema([
+                        DatePicker::make('created_at')
+                            ->label('Select Date:'),
+                    ])->query(function ($query, $data) {
+                        $query->when($data['created_at'], function ($q, $date) {
+                            $q->whereDate('created_at', $date);
+                        });
+                    }),
             ])
             ->recordActions([
                 EditAction::make(),
